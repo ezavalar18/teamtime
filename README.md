@@ -2,6 +2,7 @@ Pasos para clonar un proyecto de GitHub en Linux y Windows
 🔧 Requisitos previos
 - Tener git instalado en ambos sistemas.
 - Contar con el enlace del repositorio GitHub (ej. https://github.com/usuario/repositorio.git).
+  
 🐧 En Linux
 1. Abrir terminal.
 1.2. Verificar git:
@@ -16,6 +17,9 @@ Pasos para clonar un proyecto de GitHub en Linux y Windows
    cd repositorio
 5.6. Configurar saltos de línea:
    git config --global core.autocrlf input
+
+--------------------------------------------
+   
 🪟 En Windows
 1. Abrir Git Bash (recomendado).
 6.2. Verificar git:
