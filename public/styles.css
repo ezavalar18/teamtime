@@ -1,0 +1,119 @@
+/* Reset general */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #8a8585;
+    color: #fff;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 1600px;
+    text-align: center;
+    padding: 60px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(235, 11, 11, 0.3);
+}
+
+h1 {
+    color: #ff4d4d;
+    font-size: 4rem;
+    margin-bottom: 50px;
+}
+
+.time-display .time {
+    font-size: 6rem;
+    font-weight: bold;
+}
+
+.time-display .date {
+    font-size: 2.5rem;
+    margin-top: 15px;
+}
+
+.time-display .timezone {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    color: #ccc;
+}
+
+#codigoTrabajador {
+    margin-top: 50px;
+    width: 70%;
+    max-width: 600px;
+    padding: 20px;
+    font-size: 2rem;
+    border-radius: 12px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+}
+
+#codigoTrabajador:focus {
+    outline: none;
+    border: 2px solid #ff4d4d;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
+}
+
+.button-group {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 20px 40px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #e60000;
+    transform: scale(1.05);
+}
+
+/* Responsive para pantallas chicas */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .time-display .time {
+        font-size: 4rem;
+    }
+
+    .time-display .date {
+        font-size: 1.8rem;
+    }
+
+    #codigoTrabajador {
+        font-size: 1.5rem;
+        width: 90%;
+    }
+
+    .btn {
+        font-size: 1.2rem;
+        padding: 15px 30px;
+    }
+}
+
+
