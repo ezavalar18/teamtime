@@ -1,94 +1,37 @@
-✅ PASOS PARA CLONAR UN PROYECTO DE GITHUB EN LINUX
-Abre una terminal en Linux.
-
-Asegúrate de tener git instalado:
-
-bash
-Copiar
-Editar
-git --version
-Si no está instalado:
-
-bash
-Copiar
-Editar
-sudo apt update
-sudo apt install git
-Ve al directorio donde quieres clonar el proyecto:
-
-bash
-Copiar
-Editar
-cd ~/Documentos  # o donde quieras
-Clona el repositorio:
-
-bash
-Copiar
-Editar
-git clone https://github.com/usuario/repositorio.git
-Ejemplo:
-
-bash
-Copiar
-Editar
-git clone https://github.com/ezavalar18/teamtime.git
-Entra al directorio clonado:
-
-bash
-Copiar
-Editar
-cd teamtime
-
-
---------------------------------------------------------------------
-
-✅ PASOS PARA CLONAR UN PROYECTO DE GITHUB EN WINDOWS
-Abre Git Bash o CMD (preferible Git Bash).
-
-Verifica que tienes git instalado:
-
-bash
-Copiar
-Editar
-git --version
-Ve al directorio donde quieres clonar el proyecto:
-
-bash
-Copiar
-Editar
-cd ~/Downloads
-Clona el mismo repositorio:
-
-bash
-Copiar
-Editar
-git clone https://github.com/ezavalar18/teamtime.git
-Ingresa al proyecto:
-
-bash
-Copiar
-Editar
-cd teamtime
-🔄 CONSEJOS PARA TRABAJAR EN AMBOS SISTEMAS
-Evita conflictos por saltos de línea (CRLF vs LF):
-Puedes configurar Git para que maneje esto automáticamente:
-
-bash
-Copiar
-Editar
-git config --global core.autocrlf true   # En Windows
-git config --global core.autocrlf input  # En Linux
-Sincroniza siempre antes de trabajar:
-
-bash
-Copiar
-Editar
-git pull origin main   # o master, según tu rama
-Antes de subir cambios:
-
-bash
-Copiar
-Editar
-git add .
-git commit -m "Mensaje claro de los cambios"
-git push origin main   # o master
+Pasos para clonar un proyecto de GitHub en Linux y Windows
+🔧 Requisitos previos
+- Tener git instalado en ambos sistemas.
+- Contar con el enlace del repositorio GitHub (ej. https://github.com/usuario/repositorio.git).
+🐧 En Linux
+1. Abrir terminal.
+1.2. Verificar git:
+   git --version
+   Si no está instalado:
+   sudo apt update && sudo apt install git
+2.3. Ir al directorio deseado:
+   cd ~/Documentos
+3.4. Clonar el repositorio:
+   git clone https://github.com/usuario/repositorio.git
+4.5. Ingresar al proyecto:
+   cd repositorio
+5.6. Configurar saltos de línea:
+   git config --global core.autocrlf input
+🪟 En Windows
+1. Abrir Git Bash (recomendado).
+6.2. Verificar git:
+   git --version
+7.3. Ir al directorio deseado:
+   cd ~/Downloads
+8.4. Clonar el repositorio:
+   git clone https://github.com/usuario/repositorio.git
+9.5. Ingresar al proyecto:
+   cd repositorio
+10.6. Configurar saltos de línea:
+   git config --global core.autocrlf true
+🧠 Buenas prácticas generales
+- Antes de trabajar:
+  git pull origin main  # o master, según tu rama
+- Para subir cambios:
+  git add .
+  git commit -m "Descripción clara del cambio"
+  git push origin main  # o master
