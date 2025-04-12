@@ -29,16 +29,16 @@ Pasos para clonar un proyecto de GitHub en Linux y Windows
 2.1. Verificar git:
    git --version
    
-2.3. Ir al directorio deseado:
+2.2. Ir al directorio deseado:
    cd ~/Downloads
    
-2.4. Clonar el repositorio:
+2.3. Clonar el repositorio:
    git clone https://github.com/usuario/repositorio.git
    
-2.5. Ingresar al proyecto:
+2.4. Ingresar al proyecto:
    cd repositorio
    
-2.6. Configurar saltos de línea:
+2.5. Configurar saltos de línea:
    git config --global core.autocrlf true
 🧠 Buenas prácticas generales
 - Antes de trabajar:
