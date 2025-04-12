@@ -21,9 +21,6 @@ Pasos para clonar un proyecto de GitHub en Linux y Windows
 1.5. Ingresar al proyecto:
    cd repositorio
    
-1.6. Configurar saltos de línea:
-   git config --global core.autocrlf input
-
 --------------------------------------------
    
 🪟 En Windows
