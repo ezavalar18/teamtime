@@ -9,7 +9,7 @@ class Database {
 
     public function connect() {
         $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
-
+		//condicional de la base de datos por si sale un error o conexion fallida
         if ($this->conn->connect_error) {
             die("Conexión fallida: " . $this->conn->connect_error);
         }
