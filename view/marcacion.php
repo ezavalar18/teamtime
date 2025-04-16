@@ -2,100 +2,195 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sistema de Marcación</title>
-    <?= $stylesheets ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Marcación</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Sistema de Marcación</h1>
+        <h1 class="titulo">Sistema de Marcación</h1>
 
-        <div class="time-display">
-            <div class="time" id="horaActual"><?= $hora ?></div>
-            <div class="date" id="fechaActual"><?= $fecha ?></div>
-            <div class="timezone">Hora de Lima, Perú</div>
+        <!-- Fecha Actual -->
+        <div class="fecha">
+            <p id="fecha_lima"></p>
         </div>
 
-        <!-- Input para el código del trabajador -->
-        <input type="text" id="codigoTrabajador" name="cod_usuario" maxlength="5" pattern="\d{5}" placeholder="Ingrese código del trabajador" autofocus>
+        <!-- Hora Actual -->
+        <div class="hora">
+            <p id="hora_lima"></p> <!-- Aquí se mostrará la hora actual de Lima, Perú -->
+        </div>
 
-        <div class="button-group">
-            <button class="btn">Presione tecla 'i' para Ingreso</button>
-            <button class="btn">Presione tecla 's' para Salida</button>
+        <!-- Cuadro para ingresar token -->
+        <div class="formulario">
+            <label for="cod_usuario"></label>
+            <input type="text" id="cod_usuario" name="cod_usuario" pattern="\d{5}" maxlength="5" placeholder="Ingrese su token (5 dígitos)" required>
+            <input type="hidden" id="hora_marcada" name="hora">
+        </div>
+
+        <?php if (isset($mensaje) && !empty($mensaje)): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    mostrarModal("<?= addslashes($mensaje) ?>", "<?= strpos($mensaje, 'correctamente') !== false ? 'success' : 'error' ?>");
+                });
+            </script>
+        <?php endif; ?>
+
+        <!-- Ingreso con teclado 'i' o 's' -->
+        <div class="accion">
+            <p>Presione la tecla: 'i' para registrar hora de ingreso o la tecla: 's' para registrar hora de salida.</p>
         </div>
     </div>
 
     <script>
-        // Actualizar hora y fecha cada segundo
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('horaActual').innerText = now.toLocaleTimeString('es-PE', { hour12: false });
-        }, 1000);
+        // Función para mostrar la hora y fecha actual de Lima, Perú
+        function actualizarHora() {
+            const opcionesHora = {
+                timeZone: 'America/Lima',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
 
-        // Función que envía la solicitud POST al backend para registrar la marcación
-        function enviarMarcacion(tipo) {
-            const codigo = document.getElementById('codigoTrabajador').value;
+            const opcionesFecha = {
+                timeZone: 'America/Lima',
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            };
 
-            // Validar que el código sea un número de 5 dígitos
-            if (!/^\d{5}$/.test(codigo)) {
-                alert("El código ingresado no es válido.");
-                return;
-            }
+            const ahora = new Date();
+            const horaLima = ahora.toLocaleTimeString('es-PE', opcionesHora);
+            const fechaLima = ahora.toLocaleDateString('es-PE', opcionesFecha);
 
-            // Crear el formulario para enviar los datos por POST
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/marcacion'; // La acción que maneja la marcación
+            // Formato personalizado: Domingo 13 de abril del 2025
+            const fechaFormateada = fechaLima.replace(' de ', ' de ').replace(',', '').replace(/(\d+) de (\w+) de (\d+)/, '$1 de $2 del $3');
 
-            // Crear los campos ocultos para enviar los datos
-            const inputCod = document.createElement('input');
-            inputCod.type = 'hidden';
-            inputCod.name = 'cod_usuario';
-            inputCod.value = codigo;
-
-            const inputTipo = document.createElement('input');
-            inputTipo.type = 'hidden';
-            inputTipo.name = 'tipo';
-            inputTipo.value = tipo;
-
-            // Agregar los campos al formulario y enviarlo
-            form.appendChild(inputCod);
-            form.appendChild(inputTipo);
-            document.body.appendChild(form);
-            form.submit(); // Enviar el formulario
+            document.getElementById('hora_lima').innerText = horaLima;
+            document.getElementById('fecha_lima').innerText = capitalizarPrimeraLetra(fechaFormateada);
         }
 
-        // Captura de teclas para entrada (i) o salida (s)
-        document.addEventListener('keydown', function(event) {
-            const codigo = document.getElementById('codigoTrabajador').value;
+        function capitalizarPrimeraLetra(texto) {
+            return texto.charAt(0).toUpperCase() + texto.slice(1);
+        }
 
-            // Asegúrate de que el código sea de 5 dígitos antes de enviar la solicitud
-            if (/^\d{5}$/.test(codigo)) {
-                if (event.key === 'i') {
-                    // Enviar la marcación de entrada
-                    enviarMarcacion('entrada');
-                } else if (event.key === 's') {
-                    // Enviar la marcación de salida
-                    enviarMarcacion('salida');
+        // Actualizar la hora cada segundo
+        setInterval(actualizarHora, 1000);
+
+        // Para evitar la doble marcación, vamos a escuchar las teclas solo una vez cuando se ingrese el token completo
+        let keyListenerActivo = false;
+
+        // Inicializamos la fecha al cargar la página
+        actualizarHora();
+
+        document.getElementById('cod_usuario').addEventListener('input', function(event) {
+    const token = event.target.value;
+    if (token.length === 5) {
+        const handleKey = async function(e) {
+            if (e.key === 'i' || e.key === 's') {
+                document.removeEventListener('keydown', handleKey); // Evitar múltiples envíos
+
+                const tipo = e.key === 'i' ? 'entrada' : 'salida';
+                const formData = new FormData();
+                formData.append('cod_usuario', token);
+                formData.append('tipo', tipo);
+
+                try {
+                    const response = await fetch('/registrar', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const html = await response.text();
+
+                    // Extraer el mensaje desde la respuesta HTML si viene dentro de mostrarModal(...)
+                    const match = html.match(/mostrarModal\("(.+?)",\s?"(success|error)"\)/);
+                    if (match) {
+                        const mensaje = match[1];
+                        const tipo = match[2];
+                        mostrarModal(mensaje, tipo);
+                    } else {
+                        mostrarModal("Marcación enviada, pero no se recibió respuesta clara.", "success");
+                    }
+                } catch (error) {
+                    mostrarModal('Error de conexión con el servidor.', 'error');
                 }
+
+                // Limpiar campo y mantener foco
+                event.target.value = '';
+                event.target.focus();
             }
+        };
+
+        // Escuchar una sola vez después de completar 5 dígitos
+        document.addEventListener('keydown', handleKey);
+    }
+});
+
+
+        // Función para mostrar la ventana modal con el mensaje
+        function mostrarModal(mensaje, tipo = 'success') {
+            const modal = document.getElementById('modalMensaje');
+            const contenido = document.getElementsByClassName('modal-contenido')[0];
+            const texto = document.getElementById('mensajeTexto');
+
+            // Eliminar clases previas de tipo success o error
+            contenido.classList.remove('success', 'error');
+            contenido.classList.add(tipo);
+
+            // Insertar el mensaje dentro del modal
+            texto.textContent = mensaje;
+
+            // Mostrar la ventana modal
+            modal.style.display = 'flex';
+
+            // Ocultar modal después de 3 segundos
+            setTimeout(() => {
+                cerrarModal();
+            }, 3000);
+        }
+
+        // Función para cerrar la ventana modal
+        function cerrarModal() {
+            const modal = document.getElementById('modalMensaje');
+            modal.style.display = 'none';
+        }
+
+        // Asegura que el cursor esté siempre en el campo para ingresar el token
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputToken = document.getElementById('cod_usuario');
+            inputToken.focus();
         });
 
-        // Asegura que el campo de código esté siempre con el foco
-        const input = document.getElementById('codigoTrabajador');
-        setInterval(() => {
-            if (document.activeElement !== input) {
-                input.focus();
-            }
-        }, 500);
-
-        // Bloquea todo lo que no sea número en el campo de entrada
-        input.addEventListener('input', () => {
-            input.value = input.value.replace(/\D/g, '').slice(0, 5); // solo números, máx 5
-        });
     </script>
+
+    <!-- Modal (solo una vez) -->
+    <div id="modalMensaje" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <p id="mensajeTexto"></p>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputToken = document.getElementById('cod_usuario');
+        inputToken.focus();  // Asegura que el campo de entrada tenga el foco al cargar la página
+
+        // Asegura que el foco se mantenga en el campo, incluso si se hace clic fuera de él
+        document.body.addEventListener('click', () => {
+            inputToken.focus();  // Regresa el foco al campo de entrada
+        });
+    });
+
+    const inputToken = document.getElementById('cod_usuario');
+
+    inputToken.addEventListener('input', function(event) {
+        // Solo permitir números y máximo 5 dígitos
+        event.target.value = event.target.value.replace(/[^0-9]/g, '').slice(0, 5);
+    });
+</script>
 </body>
 </html>
-
 
 

@@ -1,8 +1,6 @@
-    # public/.htaccess
-    RewriteEngine On
-    RewriteBase /
+RewriteEngine On
+RewriteBase /
 
-    # Si la petición no es un archivo ni una carpeta existente, redirigir a index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ index.php [QSA,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

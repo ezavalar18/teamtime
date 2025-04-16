@@ -1,44 +1,58 @@
 <?php
-// public/index.php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+date_default_timezone_set('America/Lima');
 
-define('APP_ROOT', dirname(__DIR__) . '/');
-
-// Asegúrate de que la ruta del CSS esté bien
-
-$stylesheets = '<link rel="stylesheet" href="/styles.css?v=<?= time() ?>">';
-
-require_once APP_ROOT . 'autoload.php';
+require_once __DIR__ . '/../controller/AsistenciaController.php';
+require_once __DIR__ . '/../controller/AdminController.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/');
 
-// Aquí manejamos el ruteo de las vistas
+$asistenciaController = new AsistenciaController();
+$adminController = new AdminController();
+
 switch ($uri) {
     case '':
     case '/marcacion':
-        $controller = new AsistenciaController();
-        // Pasamos la variable $stylesheets para que se agregue en la vista
-        $controller->mostrarMarcacion($stylesheets);
+        $asistenciaController->mostrarMarcacion();
         break;
 
-    case '/registro':
-        $db = new Database();
-        $model = new RegistroModel($db->connect());
-        $controller = new RegistroController($model);
-        $controller->mostrarRegistro($stylesheets);
+    case '/registrar':
+        $asistenciaController->registrarMarcacion();
         break;
 
-    case '/registrar_empleado':
-        $controller = new EmpleadoController();
-        $controller->registrarEmpleado($stylesheets);
+    // Rutas del admin
+    case '/admin/login':
+        $adminController->login();
+        break;
+
+    case '/admin/autenticar':
+        $adminController->autenticar();
+        break;
+
+    case '/admin/logout':
+        $adminController->logout();
+        break;
+
+    case '/admin/dashboard':
+        $adminController->dashboard();
+        break;
+
+    case '/admin/crear_usuario':
+        $adminController->crearUsuario();
+        break;
+
+    case '/admin/guardar_usuario':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->guardarUsuario();
+        } else {
+            http_response_code(405);
+            echo "Método no permitido.";
+        }
         break;
 
     default:
         http_response_code(404);
-        echo "Página no encontrada: $uri";
+        echo "Página no encontrada.";
         break;
 }
-
