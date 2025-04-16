@@ -26,6 +26,11 @@
             </div>
 
             <button type="submit" class="btn-login">Ingresar</button>
+
+             <!-- Enlace para recuperar contraseña -->
+            <div style="margin-top: 10px; text-align: center;">
+                 <a href="/admin/recuperar" style="font-size: 0.9em; color: #007bff;">¿Olvidó su contraseña?</a>
+            </div>
         </form>
     </div>
 

@@ -50,7 +50,33 @@ switch ($uri) {
             echo "Método no permitido.";
         }
         break;
-
+    
+    case '/admin/recuperar':
+            $adminController->recuperar();
+            break;  
+            
+    case '/admin/restablecer':
+            $adminController->mostrarFormularioRestablecer();
+            break;
+            
+    case '/admin/procesar_restablecer':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->procesarRestablecer();
+                } else {
+                    http_response_code(405);
+                    echo "Método no permitido.";
+                }
+                break;
+    case '/admin/restablecer':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->restablecerContrasena();
+                } else {
+                    $adminController->mostrarFormularioRestablecer();
+                }
+                break;
+                        
+                        
+    
     default:
         http_response_code(404);
         echo "Página no encontrada.";
