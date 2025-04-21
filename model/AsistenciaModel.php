@@ -60,4 +60,5 @@ class AsistenciaModel {
         $stmt->bind_param("sis", $hora, $id_empleado, $fecha);
         return $stmt->execute();
     }
+    
 }

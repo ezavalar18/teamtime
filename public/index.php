@@ -56,8 +56,14 @@ switch ($uri) {
             break;  
             
     case '/admin/restablecer':
-            $adminController->mostrarFormularioRestablecer();
-            break;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $adminController->restablecerContrasena();
+            } else {
+                $adminController->mostrarFormularioRestablecer();
+            }
+        break;            
+            
+
             
     case '/admin/procesar_restablecer':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -74,7 +80,40 @@ switch ($uri) {
                     $adminController->mostrarFormularioRestablecer();
                 }
                 break;
-                        
+    case '/admin/actualizar_usuario':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->actualizar_usuario();
+                } else {
+                    http_response_code(405);
+                    echo "Método no permitido.";
+                }
+                break;
+    case (preg_match('#^/admin/eliminar_usuario/(\d+)$#', $uri, $matches) ? true : false):
+            $adminController->eliminarUsuario($matches[1]);
+                break;
+    case '/admin/usuarios':
+            $adminController->usuarios();  // El método que manejará la vista de usuarios
+                break;
+    // En index.php
+
+    case '/admin/usuarios':
+            $adminController->verUsuarios();  // Llamar al método que mostrará la lista de usuarios
+                break;
+                                                           
+    // En index.php
+    case '/admin/asistencias':
+            $adminController->asistencias_hoy();
+            break;
+            
+    case '/admin/actualizar_asistencia':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminController->actualizar_asistencia();
+            } else {
+              http_response_code(405);
+              echo "Método no permitido.";
+              }
+            break;
+                            
                         
     
     default:

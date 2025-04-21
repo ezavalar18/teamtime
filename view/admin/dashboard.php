@@ -1,20 +1,17 @@
+<!-- En dashboard.php -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administración</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <!-- Título a la izquierda -->
-        <a class="navbar-brand" href="#">Asistencia Admin</a>
-
-        <!-- Bienvenida y logout alineados a la derecha -->
+        <a class="navbar-brand" href="/admin/dashboard"><i class="fas fa-home me-2"></i>Panel de Administración</a>
         <div class="ms-auto d-flex align-items-center">
             <span class="navbar-text text-white me-3">
                 Bienvenido, <?= htmlspecialchars($_SESSION['admin']) ?>
@@ -24,64 +21,54 @@
     </div>
 </nav>
 
-
-<div class="container mt-5">
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Dashboard</h1>
-    <a href="/admin/crear_usuario" class="btn btn-primary">
-        <i class="fas fa-user-plus me-1"></i> Nuevo usuario
-    </a>
-</div>
-
-
-    <div class="row g-4">
-        <!-- Card de usuarios -->
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Dashboard</h2>
+    
+    <div class="row">
+        <!-- Carta de Asistencias Hoy -->
         <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-users fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Usuarios registrados</h5>
-                    <p class="card-text">100</p> <!-- Puedes cambiarlo por el número real desde la base de datos -->
+            <a href="/admin/asistencias" style="text-decoration: none;">
+                <div class="card text-white bg-success shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-calendar-check me-2"></i>Asistencias Hoy</h5>
+                        <p class="display-6"><?= $asistenciasHoy ?></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Carta de Estadísticas Generales -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users me-2"></i>Estadísticas</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Empleados:</strong> <?= $empleados ?></li>
+                        <li><strong>Usuarios:</strong> <?= $usuarios ?></li>
+                        <li><strong>Asistencias del día:</strong> <?= $asistenciasHoy ?></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Card de asistencias -->
+        <!-- Carta de Usuarios Registrados -->
         <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-check-circle fa-3x text-success"></i>
-                    <h5 class="card-title mt-3">Asistencias del día</h5>
-                    <p class="card-text">80</p> <!-- Aquí también pondrás el dato real -->
+            <a href="/admin/usuarios" style="text-decoration: none;">
+                <div class="card text-white bg-warning shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-user-circle me-2"></i>Usuarios Registrados</h5>
+                        <p class="display-6"><?= $usuariosRegistrados ?></p>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Card de reportes -->
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-file-alt fa-3x text-warning"></i>
-                    <h5 class="card-title mt-3">Reportes generados</h5>
-                    <p class="card-text">25</p> <!-- Otro dato real -->
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 
-    <!-- Barra de progreso -->
-    <div class="mt-4">
-        <h4>Progreso de asistencia del día</h4>
-        <div class="progress" style="height: 30px;">
-            <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-    </div>
+    <!-- Gráficos y más estadísticas aquí (opcional) -->
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-

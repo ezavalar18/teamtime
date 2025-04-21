@@ -26,16 +26,17 @@ class AdminController {
     public function autenticar() {
         $usuario = $_POST['usuario'] ?? '';
         $clave = $_POST['contrasena'] ?? '';
-
+    
         if (empty($usuario) || empty($clave)) {
             echo "Usuario o contraseña vacíos";
             return;
         }
-
+    
         $result = $this->modelo->obtenerUsuarioPorNombre($usuario);
-
+    
         if ($result && password_verify($clave, $result['contrasena'])) {
             $_SESSION['admin'] = $result['usuario'];
+            $_SESSION['rol'] = $result['rol'];  // Guardamos el rol del usuario
             header("Location: /admin/dashboard");
             exit;
         } else {
@@ -52,8 +53,26 @@ class AdminController {
 
     public function dashboard() {
         $this->verificarSesion();
+        
+        $rol = $_SESSION['rol'];
+    
+        // Obtener estadísticas
+        $asistenciasHoy = $this->modelo->obtenerAsistenciasHoy();
+        $faltasHoy = $this->modelo->obtenerFaltasHoy();  // Asegúrate de que esta línea esté aquí
+        $cantidadUsuarios = $this->modelo->obtenerUsuariosRegistrados();
+        $usuariosRegistrados = $this->modelo->contarUsuariosRegistrados();
+    
+        // Para los admins, puedes obtener más datos, por ejemplo, todos los usuarios registrados.
+        $usuarios = [];
+        if ($rol == 'admin') {
+            $usuarios = $this->modelo->obtenerUsuarios();
+        }
+    
+        // Pasar las variables necesarias a la vista
         require __DIR__ . '/../view/admin/dashboard.php';
     }
+    
+    
 
     public function crearUsuario() {
         $this->verificarSesion();
@@ -67,14 +86,16 @@ class AdminController {
         $usuario = $_POST['usuario'] ?? '';
         $contrasena = $_POST['contrasena'] ?? '';
         $correo = $_POST['correo'] ?? '';
-
-        if (empty($usuario) || empty($contrasena)) {
-            echo "Usuario o contraseña no pueden estar vacíos.";
+        $rol = $_POST['rol'] ?? '';  // Obtenemos el rol del formulario
+    
+        if (empty($usuario) || empty($contrasena) || empty($rol)) {
+            echo "Usuario, contraseña y rol no pueden estar vacíos.";
             return;
         }
-
-        $resultado = $this->modelo->crearUsuario($nombre, $usuario, $contrasena, $correo);
-
+    
+        // Creamos el nuevo usuario
+        $resultado = $this->modelo->crearUsuario($nombre, $usuario, $contrasena, $correo, $rol);
+    
         if ($resultado) {
             header("Location: /admin/dashboard");
             exit;
@@ -89,11 +110,11 @@ class AdminController {
             $usuario = $this->modelo->obtenerPorCorreo($correo);
 
             if ($usuario) {
-                $token = bin2hex(random_bytes(16));
+                $tokenr = bin2hex(random_bytes(16));
                 $expira = date('Y-m-d H:i:s', strtotime('+1 hour'));
-                $this->modelo->guardarTokenRecuperacion($correo, $token, $expira);
+                $this->modelo->guardarTokenRecuperacion($correo, $tokenr, $expira);
 
-                if ($this->enviarCorreoRecuperacion($correo, $token)) {
+                if ($this->enviarCorreoRecuperacion($correo, $tokenr)) {
                     $data['mensaje'] = "Se ha enviado un enlace de recuperación a tu correo.";
                 } else {
                     $data['error'] = "No se pudo enviar el correo. Intenta más tarde.";
@@ -109,33 +130,37 @@ class AdminController {
         }
     }
 
-    public function mostrarFormularioRestablecer() {
-        $token = $_GET['token'] ?? '';
-
-        if (empty($token)) {
-            echo "Token inválido.";
+    public function mostrarFormularioRestablecer() {        
+        $tokenr = $_GET['tokenr'] ?? '';
+    
+        if (empty($tokenr)) {
+            echo "Token vacío.";
             return;
         }
-
-        $usuario = $this->modelo->obtenerPorToken($token);
+    
+        $usuario = $this->modelo->obtenerPorToken($tokenr);
+    
         if (!$usuario) {
             echo "Token inválido o expirado.";
             return;
         }
-
+    
+        // 🔥 PASA el token como variable para la vista
+        $tokenActual = $tokenr;
+    
         require __DIR__ . '/../view/admin/restablecer.php';
     }
 
     public function restablecerContrasena() {
-        $token = $_POST['token'] ?? '';
+        $tokenr = $_POST['tokenr'] ?? '';
         $nuevaContrasena = $_POST['nueva_contrasena'] ?? '';
-
-        if (empty($token) || empty($nuevaContrasena)) {
+        
+        if (empty($tokenr) || empty($nuevaContrasena)) {
             echo "Faltan datos.";
             return;
         }
 
-        $usuario = $this->modelo->obtenerPorToken($token);
+        $usuario = $this->modelo->obtenerPorToken($tokenr);
         if (!$usuario) {
             echo "Token inválido o expirado.";
             return;
@@ -144,6 +169,8 @@ class AdminController {
         $resultado = $this->modelo->actualizarContrasena($usuario['correo'], $nuevaContrasena);
 
         if ($resultado) {
+            // Limpiar el token después de actualizar la contraseña
+            $this->modelo->limpiarTokenRecuperacion($usuario['correo']);
             echo "Contraseña restablecida con éxito.";
         } else {
             echo "Hubo un problema al actualizar la contraseña.";
@@ -157,7 +184,7 @@ class AdminController {
         }
     }
 
-    private function enviarCorreoRecuperacion($para, $token) {
+    private function enviarCorreoRecuperacion($para, $tokenr) {
         $mail = new PHPMailer(true);
 
         try {
@@ -166,7 +193,7 @@ class AdminController {
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = 'samu1588@gmail.com';
-            $mail->Password = 'coeg kwxk ckjv rrtj'; // Reemplaza por tu app password
+            $mail->Password = 'coeg kwxk ckjv rrtj'; //app password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
@@ -174,7 +201,7 @@ class AdminController {
             $mail->addAddress($para);
 
             $mail->Subject = 'Recuperación de contraseña';
-            $link = "http://192.168.1.13/admin/restablecer?token=$token";
+            $link = "http://192.168.1.11/admin/restablecer?tokenr=$tokenr"; // ✅
             $mail->Body = "Hola, haz clic en el siguiente enlace para restablecer tu contraseña:\n\n$link";
 
             $mail->send();
@@ -183,4 +210,158 @@ class AdminController {
             return false;
         }
     }
+
+    public function editarUsuario() {
+        $this->verificarSesion();
+    
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            echo "ID de usuario no proporcionado.";
+            return;
+        }
+    
+        $usuario = $this->modelo->obtenerUsuarioPorId($id);
+        if (!$usuario) {
+            echo "Usuario no encontrado.";
+            return;
+        }
+    
+        require __DIR__ . '/../view/admin/editar_usuario.php';
+    }
+
+    public function actualizar_usuario() {
+        $this->verificarSesion();
+    
+        $id = $_POST['id'] ?? null;
+        $nombre = $_POST['nombre'] ?? '';
+        $usuario = $_POST['usuario'] ?? '';
+        $correo = $_POST['correo'] ?? '';
+        $rol = $_POST['rol'] ?? '';
+    
+        if ($id) {
+            $this->modelo->actualizarUsuario($id, $nombre, $usuario, $correo, $rol);
+            header("Location: /admin/usuarios");
+            exit;
+        } else {
+            echo "Error: ID de usuario no proporcionado.";
+        }
+    }
+    
+    public function eliminarUsuario($id) {
+        if ($_SESSION['rol'] !== 'admin') {
+            header('Location: /admin/dashboard');
+            exit;
+        }
+    
+        // Usamos el modelo que ya está inicializado en el constructor
+        $resultado = $this->modelo->eliminarUsuarioPorId($id);
+    
+        if ($resultado) {
+            header('Location: /admin/dashboard');
+            exit;
+        } else {
+            echo "Error al eliminar el usuario.";
+        }
+    }
+    
+    public function editarMarcaciones() {
+        $this->verificarSesion();
+        
+        // Solo los editores pueden ver esta página
+        $rol = $_SESSION['rol'];
+        if ($rol !== 'editor') {
+            header('Location: /admin/dashboard');
+            exit;
+        }
+    
+        // Obtener las marcaciones del día
+        $marcaciones = $this->modelo->obtenerMarcacionesHoy();
+    
+        require __DIR__ . '/../view/admin/editar_marcaciones.php';
+    }
+    
+    public function actualizarMarcacion() {
+        $this->verificarSesion();
+        
+        $rol = $_SESSION['rol'];
+        if ($rol !== 'editor') {
+            header('Location: /admin/dashboard');
+            exit;
+        }
+    
+        $id = $_POST['id'] ?? '';
+        $horaEntrada = $_POST['hora_entrada'] ?? '';
+        $horaSalida = $_POST['hora_salida'] ?? '';
+    
+        if (empty($id) || empty($horaEntrada) || empty($horaSalida)) {
+            echo "Datos incompletos.";
+            return;
+        }
+    
+        // Actualizar la marcación
+        $resultado = $this->modelo->editarMarcacion($id, $horaEntrada, $horaSalida);
+    
+        if ($resultado) {
+            header("Location: /admin/editarMarcaciones");
+            exit;
+        } else {
+            echo "Hubo un problema al actualizar la marcación.";
+        }
+    }
+    
+    public function descargarReporte() {
+        $this->verificarSesion();
+        
+        $rol = $_SESSION['rol'];
+        if ($rol !== 'editor') {
+            header('Location: /admin/dashboard');
+            exit;
+        }
+    
+        // Llamar al modelo para generar el reporte CSV
+        $this->modelo->generarReporteCSV();
+        exit;
+    }
+    public function usuarios() {
+        $this->verificarSesion();  // Verifica que el usuario esté logueado
+    
+        $usuarios = $this->modelo->obtenerUsuarios();  // O lo que sea necesario para obtener los usuarios
+    
+        require __DIR__ . '/../view/admin/usuarios.php';  // La vista de los usuarios
+    }
+
+    // En AdminController.php
+public function asistencias_hoy() {
+    $this->verificarSesion();
+    
+    // Llamamos al modelo para obtener las asistencias del día
+    $asistencias = $this->modelo->getAsistenciasHoy();
+    
+    // Pasamos las asistencias a la vista
+    require_once '../view/admin/asistencias.php';
+}
+public function actualizarAsistencia() {
+    // Verificar que se haya enviado el formulario
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Recoger los datos del formulario
+        $id = $_POST['id'];
+        $fecha = $_POST['fecha'];
+        $hora_entrada = $_POST['hora_entrada'];
+        $hora_salida = $_POST['hora_salida'];
+
+        // Llamar al modelo para realizar la actualización
+        $this->adminModel->actualizarAsistencia($id, $fecha, $hora_entrada, $hora_salida);
+
+        // Redirigir después de la actualización
+        header("Location: /admin/asistencias_hoy");
+        exit;
+    } else {
+        // Si no es un POST, retornar un error
+        http_response_code(405);
+        echo "Método no permitido.";
+    }
+}
+
+
+    
 }

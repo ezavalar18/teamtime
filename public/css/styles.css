@@ -244,3 +244,137 @@ body {
 .card-text {
     font-size: 16px;
 }
+
+
+/*reestablecer*/
+
+/* styles.css */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.reset-container {
+    width: 100%;
+    max-width: 380px;
+    margin: 20px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+input[type="password"] {
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="password"]:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    transform: translateY(2px);
+}
+
+input[type="password"]::placeholder {
+    color: #aaa;
+}
+
+/* Icono de Font Awesome en la parte superior */
+.reset-container i {
+    color: #4CAF50;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+/* Añadir un mensaje de error o éxito */
+.error, .success {
+    color: #d9534f;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Mensaje de éxito */
+.success {
+    color: #5bc0de;
+}
+
+/* Espaciado de los elementos */
+input, button {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 480px) {
+    .reset-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    input[type="password"] {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

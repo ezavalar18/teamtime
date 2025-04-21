@@ -26,6 +26,17 @@
             <label for="correo" class="form-label">correo</label>
             <input type="text" class="form-control" id="correo" name="correo" required>
         </div>
+        <!-- Campo para seleccionar rol -->
+        <div class="mb-3">
+            <label for="rol" class="form-label">Rol</label>
+            <select class="form-select" id="rol" name="rol" required>
+                <option value="admin">Administrador</option>
+                <option value="editor">Editor</option>
+                <option value="viewer">Espectador</option>
+            </select>
+        </div>
+
+
         <button type="submit" class="btn btn-primary">Guardar</button>
         <a href="/admin/dashboard" class="btn btn-secondary">Cancelar</a>
     </form>
