@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Marcación</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/marcacion.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1 class="titulo">Sistema de Marcación</h1>
+
+<body class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+
+    <div class="container text-center">
+        <h1 class="titulo">
+            <img class="logo-reloj" src="/images/reloj1.jpg" alt="">TEAM TIME
+        </h1>
+
 
         <!-- Fecha Actual -->
         <div class="fecha">
@@ -22,10 +31,14 @@
 
         <!-- Cuadro para ingresar token -->
         <div class="formulario">
-            <label for="cod_usuario"></label>
-            <input type="text" id="cod_usuario" name="cod_usuario" pattern="\d{5}" maxlength="5" placeholder="Ingrese su token (5 dígitos)" required>
+            <label for="cod_usuario" class="visually-hidden">Código de empleado</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-user-large"></i>
+                <input type="text" id="cod_usuario" name="cod_usuario" pattern="\d{5}" maxlength="5" placeholder="Token de usuario" required>
+            </div>
             <input type="hidden" id="hora_marcada" name="hora">
         </div>
+
 
         <?php if (isset($mensaje) && !empty($mensaje)): ?>
             <script>
@@ -37,9 +50,13 @@
 
         <!-- Ingreso con teclado 'i' o 's' -->
         <div class="accion">
-            <p>Presione la tecla: 'i' para registrar hora de ingreso o la tecla: 's' para registrar hora de salida.</p>
+            <p>
+                Introduce tu Token y luego presiona:<br>
+                <strong>i</strong> para ingreso<br>
+                <strong>s</strong> para salida
+            </p>
         </div>
-    </div>
+    
 
     <script>
         // Función para mostrar la hora y fecha actual de Lima, Perú
