@@ -134,3 +134,77 @@ body {
     }
     
 }
+
+/* Modal general */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6); /* Fondo oscuro semitransparente */
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Contenido del modal */
+.modal-contenido {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    font-size: 1.2rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Botón de cerrar */
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+}
+
+/* Mensaje exitoso */
+.modal-contenido.success {
+    border-left: 8px solid #198754;
+    background-color: #e9f7ef;
+    color: #155724;
+}
+
+/* Mensaje de error */
+.modal-contenido.error {
+    border-left: 8px solid #dc3545;
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .modal-contenido {
+        width: 90%;
+        font-size: 1rem;
+    }
+}
