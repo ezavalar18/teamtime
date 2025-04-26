@@ -15,7 +15,7 @@
 
     <div class="container text-center">
         <h1 class="titulo">
-            <img class="logo-reloj" src="/images/reloj1.jpg" alt="">TEAM TIME
+            <img class="logo-reloj" src="/images/reloj1.jpg" alt="">TeamTime
         </h1>
 
 

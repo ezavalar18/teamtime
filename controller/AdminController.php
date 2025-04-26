@@ -348,10 +348,10 @@ public function actualizarAsistencia() {
         $fecha = $_POST['fecha'];
         $hora_entrada = $_POST['hora_entrada'];
         $hora_salida = $_POST['hora_salida'];
-
+    
         // Llamar al modelo para realizar la actualización
         $this->adminModel->actualizarAsistencia($id, $fecha, $hora_entrada, $hora_salida);
-
+    
         // Redirigir después de la actualización
         header("Location: /admin/asistencias_hoy");
         exit;
